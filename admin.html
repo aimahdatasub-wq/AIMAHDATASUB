@@ -315,7 +315,7 @@ b.classList.toggle('active',b.dataset.tab===tab);
 
 $('planManager').classList.toggle('hidden',tab!=='data_plans');
 
-$('thead').innerHTML='<tr>'+v.labels.map(x=>'<th>'+esc(x)+'</th>').join('')+(tab==='data_plans'?'<th>Action</th>':'')+'</tr>';
+$('thead').innerHTML='<tr>'+v.labels.map(x=>'<th>'+esc(x)+'</th>').join('')+(tab==='data_plans'||tab==='profiles'?'<th>Action</th>':'')+'</tr>';
 
 $('tbody').innerHTML='<tr><td>Loading…</td></tr>';
 
