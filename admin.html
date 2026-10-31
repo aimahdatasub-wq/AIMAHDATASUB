@@ -340,6 +340,7 @@ $('customerDetails').classList.remove('hidden');
   function openCustomerEditor(){
 const customer=currentCustomers.find(c=>c.id===currentEditingCustomerId);
 if(!customer)return;
+    currentEditingCustomerId=id;
 
 $('editName').value=customer.full_name||'';
 $('editPhone').value=customer.phone||'';
