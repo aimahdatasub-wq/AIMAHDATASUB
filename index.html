@@ -103,7 +103,7 @@ $('login').onclick=async()=>{
   if(error) throw error; showDashboard(data.user);
  }catch(e){showMsg('authMsg',e.message)}finally{$('login').disabled=false}
 };
-function showDashboard(user){
+async function showDashboard(user){
  $('auth').classList.add('hidden');$('dashboard').classList.remove('hidden');
  $('welcome').textContent='Welcome, '+(user.user_metadata?.full_name||user.email||'AIMAHDATASUB user');
 }
