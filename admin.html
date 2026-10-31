@@ -177,6 +177,18 @@ placeholder="Search by name, phone number or email..."
 autocomplete="off">
 <p class="muted">Search customers by name, phone or email.</p>
 </div>
+  <div id="customerDetails" class="panel hidden">
+  <div class="top">
+    <h3>Customer Details</h3>
+    <button type="button" id="closeCustomerDetails" class="secondary">Close</button>
+  </div>
+  <p><b>Customer ID:</b> <span id="detailId"></span></p>
+  <p><b>Full Name:</b> <span id="detailName"></span></p>
+  <p><b>Phone:</b> <span id="detailPhone"></span></p>
+  <p><b>Email:</b> <span id="detailEmail"></span></p>
+  <p><b>Account Type:</b> <span id="detailType"></span></p>
+  <p><b>Date Joined:</b> <span id="detailJoined"></span></p>
+</div>
 <div class="tablewrap">
 <table>
 <thead id="thead"></thead>
