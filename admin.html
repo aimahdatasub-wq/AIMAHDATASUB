@@ -1,24 +1,26 @@
 
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>AIMAHDATASUB | Admin</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AIMAHDATASUB Admin</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 :root{--p:#5424a8;--bg:#f6f3fc;--ink:#211936;--muted:#746d80}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);font-family:Arial,sans-serif;color:var(--ink)}
 header{background:linear-gradient(135deg,#32136f,var(--p));color:white;padding:22px 16px}
-.wrap{max-width:1050px;margin:auto;padding:0 14px}
+.wrap{max-width:1100px;margin:auto;padding:0 14px}
 h1{font-size:23px;margin:0}
-header p{margin:6px 0 0;color:#eee}
+header p{margin:6px 0 0}
 main{padding:20px 0}
-.panel,.stat{background:white;border-radius:14px;padding:17px;box-shadow:0 5px 20px #27134a0d;margin-bottom:14px}
+.panel,.stat{background:white;border-radius:14px;padding:17px;margin-bottom:14px;box-shadow:0 5px 20px #27134a0d}
 .top{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
 button{border:0;border-radius:9px;padding:11px 15px;background:var(--p);color:white;font-weight:bold;cursor:pointer}
-button:disabled{opacity:.6}
+button:disabled{opacity:.5}
+.secondary{background:#e9e1f7;color:var(--p)}
+.danger{background:#a32626}
 .muted{color:var(--muted);font-size:13px}
 .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:12px}
 .stat b{font-size:13px;color:var(--muted)}
@@ -32,53 +34,191 @@ th,td{text-align:left;padding:11px 9px;border-bottom:1px solid #eee}
 th{color:var(--muted)}
 .msg{padding:12px;background:#f0eafb;color:#45218a;border-radius:9px;margin:12px 0;white-space:pre-wrap}
 .hidden{display:none!important}
+input,select{width:100%;padding:12px;border:1px solid #ddd;border-radius:8px;margin:6px 0 14px;font-size:15px;background:white}
+label{font-size:13px;font-weight:bold}
+.formgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px}
+.form-actions{display:flex;gap:8px;flex-wrap:wrap}
+.status-on{color:green;font-weight:bold}
+.status-off{color:#a32626;font-weight:bold}
+.smallbtn{padding:7px 10px;margin:2px;font-size:12px}
 </style>
 </head>
 <body>
-<header><div class="wrap">
+
+<header>
+<div class="wrap">
 <h1>AIMAHDATASUB — ADMIN</h1>
-<p>Secure administration dashboard</p>
-</div></header>
+<p>Data Plans and Customer Management</p>
+</div>
+</header>
+
 <main class="wrap">
-<section id="loading" class="panel">Checking administrator access…</section>
+
+<section id="loading" class="panel">
+Checking administrator access…
+</section>
+
 <section id="denied" class="panel hidden">
 <h2>Access denied</h2>
-<p>Your signed-in account is not registered as an administrator.</p>
+<p>This account is not registered as an administrator.</p>
 <button id="deniedLogout">Sign out</button>
 </section>
+
 <section id="app" class="hidden">
+
 <div class="panel top">
-<div><b id="adminEmail">Administrator</b><div class="muted">Admin account</div></div>
-<div><button id="refresh">Refresh</button> <button id="logout">Logout</button></div>
+<div>
+<b id="adminEmail">Administrator</b>
+<div class="muted">Admin account</div>
 </div>
+<div>
+<button id="refresh">Refresh</button>
+<button id="logout">Logout</button>
+</div>
+</div>
+
 <div id="message" class="msg hidden"></div>
+
 <div class="stats">
 <div class="stat"><b>Total customers</b><strong id="usersCount">—</strong></div>
 <div class="stat"><b>Wallet accounts</b><strong id="walletsCount">—</strong></div>
 <div class="stat"><b>Transactions</b><strong id="transactionsCount">—</strong></div>
 <div class="stat"><b>Active data plans</b><strong id="plansCount">—</strong></div>
 </div>
+
 <div class="panel">
+
 <div class="tabs">
 <button class="active" data-tab="profiles">Customers</button>
 <button data-tab="wallets">Wallets</button>
 <button data-tab="transactions">Transactions</button>
-<button data-tab="data_plans">Data plans</button>
+<button data-tab="data_plans">Data Plans</button>
 </div>
-<div class="top"><h2 id="tableTitle">Customers</h2><span class="muted">Read-only view</span></div>
+
+<div id="planManager" class="hidden">
+
+<div class="top">
+<h2>Data Plans Management</h2>
+<button id="newPlan">+ Add New Plan</button>
+</div>
+
+<div id="planForm" class="panel hidden">
+<h3 id="formTitle">Add New Data Plan</h3>
+
+<form id="dataPlanForm">
+
+<div class="formgrid">
+
+<div>
+<label>Network</label>
+<select id="network" required>
+<option value="">Select Network</option>
+<option value="MTN">MTN</option>
+<option value="Airtel">Airtel</option>
+<option value="Glo">Glo</option>
+<option value="9mobile">9mobile</option>
+</select>
+</div>
+
+<div>
+<label>Plan Name</label>
+<input id="planName" placeholder="Example: 1GB Monthly" required>
+</div>
+
+<div>
+<label>Plan Code</label>
+<input id="planCode" placeholder="Enter provider plan code" required>
+</div>
+
+<div>
+<label>Price (₦)</label>
+<input id="price" type="number" min="0.01" step="0.01" placeholder="Example: 500" required>
+</div>
+
+<div>
+<label>Validity</label>
+<input id="validity" placeholder="Example: 30 Days" required>
+</div>
+
+<div>
+<label>Package Status</label>
+<select id="active">
+<option value="true">Active</option>
+<option value="false">Inactive</option>
+</select>
+</div>
+
+</div>
+
+<div class="form-actions">
+<button id="savePlan" type="submit">Save Data Plan</button>
+<button id="cancelPlan" type="button" class="secondary">Cancel</button>
+</div>
+
+</form>
+</div>
+
+<p class="muted">
+Add and manage your MTN, Airtel, Glo and 9mobile packages here.
+</p>
+
+</div>
+
+<div class="top">
+<h2 id="tableTitle">Customers</h2>
+<span class="muted" id="tableHint">Admin data view</span>
+</div>
+
 <div class="tablewrap">
-<table><thead id="thead"></thead><tbody id="tbody"><tr><td>Loading…</td></tr></tbody></table>
+<table>
+<thead id="thead"></thead>
+<tbody id="tbody">
+<tr><td>Loading…</td></tr>
+</tbody>
+</table>
 </div>
+
 </div>
-<p class="muted">This first version is read-only. Wallet credits, debits, customer status changes and VTU orders will only be added through secure server-side operations with audit records.</p>
+
+<p class="muted">
+AIMAHDATASUB Admin Dashboard. Customer wallet operations and VTU transactions require secure server-side processing.
+</p>
+
 </section>
 </main>
+
 <script>
-let client=null,currentTab='profiles';
+let client=null;
+let currentTab='profiles';
+let editingId=null;
+let currentPlans=[];
+
 const $=id=>document.getElementById(id);
-function message(s){$('message').textContent=s;$('message').classList.remove('hidden')}
-function esc(v){return String(v??'—').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
-async function signOut(){if(client)await client.auth.signOut();location.href='./'}
+
+function message(s){
+$('message').textContent=s;
+$('message').classList.remove('hidden');
+}
+
+function clearMessage(){
+$('message').classList.add('hidden');
+}
+
+function esc(v){
+return String(v??'—').replace(/[&<>"']/g,c=>({
+'&':'&amp;',
+'<':'&lt;',
+'>':'&gt;',
+'"':'&quot;',
+"'":'&#39;'
+}[c]));
+}
+
+async function signOut(){
+if(client)await client.auth.signOut();
+location.href='./';
+}
+
 async function loadCount(table,filter){
 let q=client.from(table).select('*',{count:'exact',head:true});
 if(filter)q=q.eq(filter[0],filter[1]);
@@ -86,67 +226,244 @@ const {count,error}=await q;
 if(error)throw error;
 return count??0;
 }
+
 const views={
-profiles:{title:'Customers',cols:['full_name','phone','email','account_type','created_at'],labels:['Name','Phone','Email','Account type','Joined']},
-wallets:{title:'Wallets',cols:['user_id','balance','updated_at'],labels:['Customer ID','Balance (₦)','Updated']},
-transactions:{title:'Transactions',cols:['reference','user_id','transaction_type','amount','status','created_at'],labels:['Reference','Customer ID','Type','Amount (₦)','Status','Date']},
-data_plans:{title:'Data plans',cols:['network','plan_name','plan_code','price','validity','is_active'],labels:['Network','Plan','Code','Price (₦)','Validity','Active']}
+profiles:{
+title:'Customers',
+cols:['full_name','phone','email','account_type','created_at'],
+labels:['Name','Phone','Email','Account type','Joined']
+},
+wallets:{
+title:'Wallets',
+cols:['user_id','balance','updated_at'],
+labels:['Customer ID','Balance (₦)','Updated']
+},
+transactions:{
+title:'Transactions',
+cols:['reference','user_id','transaction_type','amount','status','created_at'],
+labels:['Reference','Customer ID','Type','Amount (₦)','Status','Date']
+},
+data_plans:{
+title:'Data Plans',
+cols:['network','plan_name','plan_code','price','validity','is_active'],
+labels:['Network','Plan','Code','Price (₦)','Validity','Status']
+}
 };
+
+function openNewPlan(){
+editingId=null;
+$('dataPlanForm').reset();
+$('formTitle').textContent='Add New Data Plan';
+$('savePlan').textContent='Save Data Plan';
+$('planForm').classList.remove('hidden');
+}
+
+function closePlanForm(){
+$('planForm').classList.add('hidden');
+editingId=null;
+$('dataPlanForm').reset();
+}
+
+function editPlan(id){
+const plan=currentPlans.find(p=>p.id===id);
+if(!plan)return;
+
+editingId=id;
+$('network').value=plan.network;
+$('planName').value=plan.plan_name;
+$('planCode').value=plan.plan_code;
+$('price').value=plan.price;
+$('validity').value=plan.validity;
+$('active').value=String(plan.is_active);
+
+$('formTitle').textContent='Edit Data Plan';
+$('savePlan').textContent='Update Data Plan';
+$('planForm').classList.remove('hidden');
+$('planForm').scrollIntoView({behavior:'smooth'});
+}
+
 async function loadTable(tab){
 currentTab=tab;
 const v=views[tab];
+
 $('tableTitle').textContent=v.title;
-document.querySelectorAll('[data-tab]').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));
-$('thead').innerHTML='<tr>'+v.labels.map(x=>'<th>'+esc(x)+'</th>').join('')+'</tr>';
-$('tbody').innerHTML='<tr><td colspan="'+v.cols.length+'">Loading…</td></tr>';
-let q=client.from(tab).select(v.cols.join(',')).limit(100);
-if(tab==='transactions'||tab==='profiles')q=q.order('created_at',{ascending:false});
-else if(tab==='wallets')q=q.order('updated_at',{ascending:false});
-else q=q.order('network',{ascending:true});
+$('tableHint').textContent=tab==='data_plans'?'Manage packages below':'Admin data view';
+
+document.querySelectorAll('[data-tab]').forEach(b=>{
+b.classList.toggle('active',b.dataset.tab===tab);
+});
+
+$('planManager').classList.toggle('hidden',tab!=='data_plans');
+
+$('thead').innerHTML='<tr>'+v.labels.map(x=>'<th>'+esc(x)+'</th>').join('')+(tab==='data_plans'?'<th>Action</th>':'')+'</tr>';
+
+$('tbody').innerHTML='<tr><td>Loading…</td></tr>';
+
+let q;
+
+if(tab==='data_plans'){
+q=client.from('data_plans').select('*').order('network',{ascending:true}).limit(200);
+}else{
+q=client.from(tab).select(v.cols.join(',')).limit(100);
+if(tab==='transactions'||tab==='profiles'){
+q=q.order('created_at',{ascending:false});
+}else if(tab==='wallets'){
+q=q.order('updated_at',{ascending:false});
+}
+}
+
 const {data,error}=await q;
 if(error)throw error;
-$('tbody').innerHTML=data?.length?data.map(row=>'<tr>'+v.cols.map(c=>'<td>'+esc(row[c])+'</td>').join('')+'</tr>').join(''):'<tr><td colspan="'+v.cols.length+'">No records found.</td></tr>';
+
+if(tab==='data_plans'){
+currentPlans=data||[];
+
+$('tbody').innerHTML=currentPlans.length?currentPlans.map(p=>`
+<tr>
+<td>${esc(p.network)}</td>
+<td>${esc(p.plan_name)}</td>
+<td>${esc(p.plan_code)}</td>
+<td>${esc(p.price)}</td>
+<td>${esc(p.validity)}</td>
+<td class="${p.is_active?'status-on':'status-off'}">${p.is_active?'Active':'Inactive'}</td>
+<td><button class="smallbtn" data-edit="${esc(p.id)}">Edit</button></td>
+</tr>
+`).join(''):'<tr><td colspan="7">No data plans found. Add your first plan above.</td></tr>';
+
+document.querySelectorAll('[data-edit]').forEach(b=>{
+b.onclick=()=>editPlan(b.dataset.edit);
+});
+
+}else{
+$('tbody').innerHTML=data?.length?
+data.map(row=>'<tr>'+v.cols.map(c=>'<td>'+esc(row[c])+'</td>').join('')+'</tr>').join(''):
+'<tr><td colspan="'+v.cols.length+'">No records found.</td></tr>';
 }
+}
+
 async function refresh(){
 $('refresh').disabled=true;
+
 try{
 const [u,w,t,p]=await Promise.all([
-loadCount('profiles'),loadCount('wallets'),loadCount('transactions'),loadCount('data_plans',['is_active',true])
+loadCount('profiles'),
+loadCount('wallets'),
+loadCount('transactions'),
+loadCount('data_plans',['is_active',true])
 ]);
+
 $('usersCount').textContent=u;
 $('walletsCount').textContent=w;
 $('transactionsCount').textContent=t;
 $('plansCount').textContent=p;
+
 await loadTable(currentTab);
-$('message').classList.add('hidden');
-}catch(e){message('Could not load dashboard data: '+e.message)}
-finally{$('refresh').disabled=false}
+clearMessage();
+
+}catch(e){
+message('Could not load dashboard data: '+e.message);
 }
-document.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>loadTable(b.dataset.tab).catch(e=>message(e.message)));
+finally{
+$('refresh').disabled=false;
+}
+}
+
+$('dataPlanForm').addEventListener('submit',async e=>{
+e.preventDefault();
+
+const plan={
+network:$('network').value,
+plan_name:$('planName').value.trim(),
+plan_code:$('planCode').value.trim(),
+price:Number($('price').value),
+validity:$('validity').value.trim(),
+is_active:$('active').value==='true'
+};
+
+if(!plan.network||!plan.plan_name||!plan.plan_code||!plan.validity||!Number.isFinite(plan.price)||plan.price<=0){
+message('Please enter all required plan details and a valid price.');
+return;
+}
+
+$('savePlan').disabled=true;
+
+try{
+let result;
+
+if(editingId){
+result=await client.from('data_plans').update(plan).eq('id',editingId);
+}else{
+result=await client.from('data_plans').insert(plan);
+}
+
+if(result.error)throw result.error;
+
+closePlanForm();
+message(editingId?'Data plan updated successfully.':'New data plan added successfully.');
+await refresh();
+
+}catch(err){
+message('Could not save data plan: '+err.message);
+}
+finally{
+$('savePlan').disabled=false;
+}
+});
+
+$('newPlan').onclick=openNewPlan;
+$('cancelPlan').onclick=closePlanForm;
+
+document.querySelectorAll('[data-tab]').forEach(b=>{
+b.onclick=()=>{
+closePlanForm();
+loadTable(b.dataset.tab).catch(e=>message(e.message));
+};
+});
+
 $('refresh').onclick=refresh;
 $('logout').onclick=signOut;
 $('deniedLogout').onclick=signOut;
+
 (async()=>{
 try{
 const url=localStorage.getItem('datasub_url');
 const key=localStorage.getItem('datasub_key');
-if(!url||!key)throw new Error('Open the main AIMAHDATASUB page first and save the Supabase Project URL and Publishable Key.');
+
+if(!url||!key){
+throw new Error('Open the main AIMAHDATASUB page first and save the Supabase Project URL and Publishable Key.');
+}
+
 client=window.supabase.createClient(url,key);
+
 const {data:{session},error}=await client.auth.getSession();
 if(error)throw error;
+
 if(!session){
 $('loading').textContent='No active login found. Please login on the main AIMAHDATASUB page, then open Admin again.';
 return;
 }
+
 const {data:admin,error:adminError}=await client.from('admin_users').select('user_id').eq('user_id',session.user.id).maybeSingle();
+
 if(adminError)throw adminError;
+
 $('loading').classList.add('hidden');
-if(!admin){$('denied').classList.remove('hidden');return;}
+
+if(!admin){
+$('denied').classList.remove('hidden');
+return;
+}
+
 $('app').classList.remove('hidden');
 $('adminEmail').textContent=session.user.email||'Administrator';
+
 await refresh();
-}catch(e){$('loading').textContent='Setup error: '+e.message}
+
+}catch(e){
+$('loading').textContent='Setup error: '+e.message;
+}
 })();
 </script>
+
 </body>
 </html>
