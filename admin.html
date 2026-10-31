@@ -318,7 +318,7 @@ new Date(customer.created_at).toLocaleString():'';
 
 $('customerDetails').classList.remove('hidden');
 }
-currentTab=tab;
+async function loadTable(tab){
 const v=views[tab];
 
 $('tableTitle').textContent=v.title;
