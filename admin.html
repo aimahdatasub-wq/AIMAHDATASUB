@@ -368,7 +368,7 @@ String(row[key]||'').toLowerCase().includes(term)
 );
 
 $('tbody').innerHTML=filtered.length?
-filtered.map(row=>'<tr>'+v.cols.map(c=>'<td>'+esc(row[c])+'</td>').join('')+'</tr>').join(''):
+filtered.map(row=>'<tr>'+v.cols.map(c=>'<td>'+esc(row[c])+'</td>').join('')+'<td><button class="smallbtn" data-view-customer="'+esc(row.id)+'">View</button></td></tr>').join(''):
 '<tr><td colspan="'+v.cols.length+'">No matching customers found.</td></tr>';
 };
 
