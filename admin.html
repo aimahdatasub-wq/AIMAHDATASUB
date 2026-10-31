@@ -517,6 +517,11 @@ loadTable(b.dataset.tab).catch(e=>message(e.message));
 $('closeCustomerDetails').onclick=()=>{
 $('customerDetails').classList.add('hidden');
 };
+  $('editCustomerBtn').onclick=openCustomerEditor;
+
+$('cancelCustomerEdit').onclick=()=>{
+$('editCustomerForm').classList.add('hidden');
+};
 $('logout').onclick=signOut;
 $('deniedLogout').onclick=signOut;
 
