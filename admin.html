@@ -190,6 +190,23 @@ autocomplete="off">
   <p><b>Account Type:</b> <span id="detailType"></span></p>
   <p><b>Date Joined:</b> <span id="detailJoined"></span></p>
 </div>
+  <div id="editCustomerForm" class="panel hidden">
+  <h3>Edit Customer Details</h3>
+
+  <label>Full Name</label>
+  <input id="editName" type="text">
+
+  <label>Phone Number</label>
+  <input id="editPhone" type="tel">
+
+  <label>Email</label>
+  <input id="editEmail" type="email">
+
+  <div class="form-actions">
+    <button type="button" id="saveCustomerBtn">Save Changes</button>
+    <button type="button" id="cancelCustomerEdit" class="secondary">Cancel</button>
+  </div>
+</div>
 <div class="tablewrap">
 <table>
 <thead id="thead"></thead>
