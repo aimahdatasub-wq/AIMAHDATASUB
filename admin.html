@@ -337,6 +337,16 @@ new Date(customer.created_at).toLocaleString():'';
 
 $('customerDetails').classList.remove('hidden');
 }
+  function openCustomerEditor(){
+const customer=currentCustomers.find(c=>c.id===currentEditingCustomerId);
+if(!customer)return;
+
+$('editName').value=customer.full_name||'';
+$('editPhone').value=customer.phone||'';
+$('editEmail').value=customer.email||'';
+
+$('editCustomerForm').classList.remove('hidden');
+}
 async function loadTable(tab){
 const v=views[tab];
 
