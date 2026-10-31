@@ -321,6 +321,7 @@ $('planForm').scrollIntoView({behavior:'smooth'});
 }
 
 let currentCustomers=[];
+let currentEditingCustomerId=null;
 
 function showCustomerDetails(id){
 const customer=currentCustomers.find(c=>c.id===id);
