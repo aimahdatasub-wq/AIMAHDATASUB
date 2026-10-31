@@ -326,7 +326,7 @@ let currentEditingCustomerId=null;
 function showCustomerDetails(id){
 const customer=currentCustomers.find(c=>c.id===id);
 if(!customer)return;
-
+currentEditingCustomerId=id;
 $('detailId').textContent=customer.id||'';
 $('detailName').textContent=customer.full_name||'';
 $('detailPhone').textContent=customer.phone||'';
@@ -340,7 +340,7 @@ $('customerDetails').classList.remove('hidden');
   function openCustomerEditor(){
 const customer=currentCustomers.find(c=>c.id===currentEditingCustomerId);
 if(!customer)return;
-    currentEditingCustomerId=id;
+    
 
 $('editName').value=customer.full_name||'';
 $('editPhone').value=customer.phone||'';
