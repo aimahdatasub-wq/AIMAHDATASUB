@@ -522,6 +522,42 @@ $('customerDetails').classList.add('hidden');
 $('cancelCustomerEdit').onclick=()=>{
 $('editCustomerForm').classList.add('hidden');
 };
+  $('saveCustomerBtn').onclick=async()=>{
+const customer=currentCustomers.find(c=>c.id===currentEditingCustomerId);
+if(!customer)return;
+
+const updates={
+full_name:$('editName').value.trim(),
+phone:$('editPhone').value.trim(),
+email:$('editEmail').value.trim()
+};
+
+if(!updates.full_name||!updates.phone||!updates.email){
+message('Please fill in all customer details.');
+return;
+}
+
+$('saveCustomerBtn').disabled=true;
+
+try{
+const {error}=await client.from('profiles')
+.update(updates)
+.eq('id',currentEditingCustomerId);
+
+if(error)throw error;
+
+message('Customer details updated successfully.');
+$('editCustomerForm').classList.add('hidden');
+$('customerDetails').classList.add('hidden');
+await refresh();
+
+}catch(e){
+message('Could not update customer: '+e.message);
+}
+finally{
+$('saveCustomerBtn').disabled=false;
+}
+};
   $('editCustomerBtn').onclick=openCustomerEditor;
 
 $('cancelCustomerEdit').onclick=()=>{
