@@ -302,7 +302,22 @@ $('planForm').classList.remove('hidden');
 $('planForm').scrollIntoView({behavior:'smooth'});
 }
 
-async function loadTable(tab){
+let currentCustomers=[];
+
+function showCustomerDetails(id){
+const customer=currentCustomers.find(c=>c.id===id);
+if(!customer)return;
+
+$('detailId').textContent=customer.id||'';
+$('detailName').textContent=customer.full_name||'';
+$('detailPhone').textContent=customer.phone||'';
+$('detailEmail').textContent=customer.email||'';
+$('detailType').textContent=customer.account_type||'';
+$('detailJoined').textContent=customer.created_at?
+new Date(customer.created_at).toLocaleString():'';
+
+$('customerDetails').classList.remove('hidden');
+}
 currentTab=tab;
 const v=views[tab];
 
