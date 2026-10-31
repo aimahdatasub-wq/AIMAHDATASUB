@@ -388,7 +388,12 @@ filtered.map(row=>'<tr>'+v.cols.map(c=>'<td>'+esc(row[c])+'</td>').join('')+'<td
 };
 
 input.oninput=renderCustomers;
-renderCustomers();
+currentCustomers=data||[];
+
+$('tbody').onclick=(e)=>{
+const button=e.target.closest('[data-view-customer]');
+if(button)showCustomerDetails(button.dataset.viewCustomer);
+};
 
 }else{
 $('customerSearch').classList.add('hidden');
