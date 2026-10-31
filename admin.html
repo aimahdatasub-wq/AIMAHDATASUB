@@ -484,7 +484,9 @@ loadTable(b.dataset.tab).catch(e=>message(e.message));
 };
 });
 
-$('refresh').onclick=refresh;
+$('closeCustomerDetails').onclick=()=>{
+$('customerDetails').classList.add('hidden');
+};
 $('logout').onclick=signOut;
 $('deniedLogout').onclick=signOut;
 
