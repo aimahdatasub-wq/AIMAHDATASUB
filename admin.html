@@ -323,8 +323,7 @@ let q;
 
 if(tab==='data_plans'){
 q=client.from('data_plans').select('*').order('network',{ascending:true}).limit(200);
-}else{
-q=client.from(tab).select(v.cols.join(',')).limit(100);
+}else{q=client.from(tab).select(tab==='profiles'?'id,'+v.cols.join(','):v.cols.join(',')).limit(100);
 if(tab==='transactions'||tab==='profiles'){
 q=q.order('created_at',{ascending:false});
 }else if(tab==='wallets'){
