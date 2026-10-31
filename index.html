@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AIMAHDATASUB</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{--p:#5424a8;--p2:#7545cf;--bg:#f6f3fc;--ink:#211936;--muted:#746d80}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);font-family:Arial,sans-serif;color:var(--ink)}
+header{background:linear-gradient(135deg,var(--p),var(--p2));color:#fff;padding:25px 20px 34px}
+.wrap{max-width:480px;margin:auto}h1{margin:0;font-size:28px;letter-spacing:1px}header p{margin:8px 0 0;color:#eee}
+main{padding:0 16px 30px;margin-top:-18px}.card{background:#fff;border-radius:18px;padding:22px;box-shadow:0 8px 28px #27134a12;margin-bottom:15px}
+h2{margin:0 0 8px;color:var(--p)}.sub{color:var(--muted);font-size:14px;line-height:1.5;margin:0 0 18px}
+label{display:block;font-size:13px;font-weight:bold;margin:13px 0 6px}
+input{width:100%;padding:13px;border:1px solid #ddd6eb;border-radius:10px;font-size:15px;background:#fff}
+button{width:100%;border:0;border-radius:10px;padding:14px;background:var(--p);color:white;font-size:15px;font-weight:bold;margin-top:15px;cursor:pointer}
+button.secondary{background:#eee8f8;color:var(--p)}button:disabled{opacity:.6}
+.row{display:flex;gap:10px}.row button{flex:1}.switch{color:var(--p);font-weight:bold;cursor:pointer;text-align:center;margin-top:17px;font-size:14px}
+.note{font-size:12px;color:var(--muted);line-height:1.5}.msg{padding:11px;border-radius:9px;background:#f0eafb;color:#45218a;font-size:13px;margin-top:12px;display:none;white-space:pre-wrap}
+.hidden{display:none!important}.brand{font-weight:bold;color:var(--p)}.topline{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
+</style>
+</head>
+<body>
+<header><div class="wrap"><h1>AIMAHDATASUB</h1><p>Your Data, Your Connection.</p></div></header>
+<main class="wrap">
+<section id="setup" class="card">
+<h2>Connect AIMAHDATASUB</h2><p class="sub">Enter your Supabase Project URL and Publishable Key. These are project connection details; never enter a Secret or service_role key here.</p>
+<label>Supabase Project URL</label><input id="projectUrl" placeholder="https://your-project.supabase.co" autocomplete="url">
+<label>Supabase Publishable Key</label><input id="publicKey" placeholder="sb_publishable_..." autocomplete="off">
+<button id="saveSetup">Save connection</button>
+<p class="note">The Publishable Key is intended for browser use. Your database must still be protected by Row Level Security (RLS).</p>
+<div id="setupMsg" class="msg"></div>
+</section>
+
+<section id="auth" class="card hidden">
+<div class="topline"><span class="brand">AIMAHDATASUB</span><span class="note">Secure account</span></div>
+<div id="signupPanel">
+<h2>Create account</h2><p class="sub">Register to buy airtime and data.</p>
+<label>Full name</label><input id="fullName" placeholder="Your full name" autocomplete="name">
+<label>Phone number</label><input id="phone" placeholder="08012345678" inputmode="tel" autocomplete="tel">
+<label>Email address</label><input id="email" type="email" placeholder="you@example.com" autocomplete="email">
+<label>Password</label><input id="password" type="password" placeholder="At least 8 characters" autocomplete="new-password">
+<button id="signup">Create account</button>
+<div class="switch" id="toLogin">Already have an account? Login</div>
+</div>
+<div id="loginPanel" class="hidden">
+<h2>Welcome back</h2><p class="sub">Login to your AIMAHDATASUB account.</p>
+<label>Email address</label><input id="loginEmail" type="email" placeholder="you@example.com" autocomplete="email">
+<label>Password</label><input id="loginPassword" type="password" placeholder="Your password" autocomplete="current-password">
+<button id="login">Login</button>
+<div class="switch" id="toSignup">New to AIMAHDATASUB? Create account</div>
+</div>
+<div id="authMsg" class="msg"></div>
+</section>
+
+<section id="dashboard" class="card hidden">
+<div class="topline"><span class="brand">AIMAHDATASUB DASHBOARD</span><button id="logout" style="width:auto;margin:0;padding:9px 14px">Logout</button></div>
+<h2 id="welcome">Welcome</h2><p class="sub">Your account is connected. Data and airtime purchases will be enabled after VTU API activation and payment setup.</p>
+<div class="card" style="background:#f7f3ff;box-shadow:none;margin:0"><b>Wallet balance</b><h2>₦0.00</h2><p class="note">Wallet funding is not enabled yet.</p></div>
+</section>
+</main>
+<script>
+let client=null;
+const $=id=>document.getElementById(id);
+function showMsg(id,msg){$(id).style.display='block';$(id).textContent=msg}
+function connect(url,key){
+ if(!window.supabase){throw new Error('Could not load Supabase library. Check your internet connection and reload.')}
+ client=window.supabase.createClient(url,key);
+ $('setup').classList.add('hidden');$('auth').classList.remove('hidden');
+}
+$('saveSetup').onclick=()=>{
+ try{
+  const url=$('projectUrl').value.trim().replace(/\/$/,'');
+  const key=$('publicKey').value.trim();
+  if(!/^https:\/\/[a-z0-9-]+\.supabase\.co$/i.test(url)) throw new Error('Enter the full Supabase Project URL.');
+  if(!key.startsWith('sb_publishable_') && !key.startsWith('eyJ')) throw new Error('Use the Publishable key (or legacy anon public key), never a Secret/service_role key.');
+  localStorage.setItem('datasub_url',url);localStorage.setItem('datasub_key',key);
+  connect(url,key);
+ }catch(e){showMsg('setupMsg',e.message)}
+};
+$('toLogin').onclick=()=>{$('signupPanel').classList.add('hidden');$('loginPanel').classList.remove('hidden');$('authMsg').style.display='none'};
+$('toSignup').onclick=()=>{$('loginPanel').classList.add('hidden');$('signupPanel').classList.remove('hidden');$('authMsg').style.display='none'};
+$('signup').onclick=async()=>{
+ const full_name=$('fullName').value.trim(),phone=$('phone').value.trim(),email=$('email').value.trim(),password=$('password').value;
+ if(!full_name||!phone||!email||password.length<8){showMsg('authMsg','Enter your name, phone, valid email and a password of at least 8 characters.');return}
+ $('signup').disabled=true;
+ try{
+  const {data,error}=await client.auth.signUp({email,password,options:{data:{full_name,phone,account_type:'customer'}}});
+  if(error) throw error;
+  showMsg('authMsg',data.session?'Account created successfully.':'Registration received. Check your email for the confirmation link, then login.');
+ }catch(e){showMsg('authMsg',e.message)}finally{$('signup').disabled=false}
+};
+$('login').onclick=async()=>{
+ $('login').disabled=true;
+ try{
+  const {data,error}=await client.auth.signInWithPassword({email:$('loginEmail').value.trim(),password:$('loginPassword').value});
+  if(error) throw error; showDashboard(data.user);
+ }catch(e){showMsg('authMsg',e.message)}finally{$('login').disabled=false}
+};
+function showDashboard(user){
+ $('auth').classList.add('hidden');$('dashboard').classList.remove('hidden');
+ $('welcome').textContent='Welcome, '+(user.user_metadata?.full_name||user.email||'AIMAHDATASUB user');
+}
+$('logout').onclick=async()=>{await client.auth.signOut();$('dashboard').classList.add('hidden');$('auth').classList.remove('hidden')};
+(async()=>{
+ const url=localStorage.getItem('datasub_url'),key=localStorage.getItem('datasub_key');
+ if(url&&key){try{connect(url,key);const {data}=await client.auth.getSession();if(data.session)showDashboard(data.session.user)}catch(e){showMsg('setupMsg',e.message)}}
+})();
+</script>
+</body></html>
