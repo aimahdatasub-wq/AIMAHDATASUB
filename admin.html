@@ -343,9 +343,34 @@ b.onclick=()=>editPlan(b.dataset.edit);
 });
 
 }else{
+if(tab==='profiles'){
+const input=$('customerSearchInput');
+$('customerSearch').classList.remove('hidden');
+
+const renderCustomers=()=>{
+const term=input.value.trim().toLowerCase();
+
+const filtered=(data||[]).filter(row=>
+['full_name','phone','email'].some(key=>
+String(row[key]||'').toLowerCase().includes(term)
+)
+);
+
+$('tbody').innerHTML=filtered.length?
+filtered.map(row=>'<tr>'+v.cols.map(c=>'<td>'+esc(row[c])+'</td>').join('')+'</tr>').join(''):
+'<tr><td colspan="'+v.cols.length+'">No matching customers found.</td></tr>';
+};
+
+input.oninput=renderCustomers;
+renderCustomers();
+
+}else{
+$('customerSearch').classList.add('hidden');
+
 $('tbody').innerHTML=data?.length?
 data.map(row=>'<tr>'+v.cols.map(c=>'<td>'+esc(row[c])+'</td>').join('')+'</tr>').join(''):
 '<tr><td colspan="'+v.cols.length+'">No records found.</td></tr>';
+}
 }
 }
 
