@@ -91,11 +91,7 @@ $('signup').onclick=async()=>{
  if(!full_name||!phone||!email||password.length<8){showMsg('authMsg','Enter your name, phone, valid email and a password of at least 8 characters.');return}
  $('signup').disabled=true;
  try{
-  const {data,error}=await client.auth.signUp({email,password,options:{data:{full_name,phone,account_type:'customer'}}});
-  if(error) throw error;
-  showMsg('authMsg',data.session?'Account created successfully.':'Registration received. Check your email for the confirmation link, then login.');
- }catch(e){showMsg('authMsg',e.message)}finally{$('signup').disabled=false}
-};
+  
 $('login').onclick=async()=>{
  $('login').disabled=true;
  try{
