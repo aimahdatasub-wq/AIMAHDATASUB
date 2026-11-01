@@ -107,17 +107,7 @@ async function showDashboard(user){
 
  $('customerEmail').textContent=user.email||'—';
 
- const {data:profile,error}=await client
- .from('profiles')
- .select('full_name,phone')
- .eq('id',user.id)
- .maybeSingle();
-
- if(error) {
-  showMsg('authMsg',error.message);
-  return;
- }
-
+ 
  $('customerName').textContent=profile?.full_name||'—';
  $('customerPhone').textContent=profile?.phone||'—';
 }
