@@ -104,13 +104,22 @@ async function showDashboard(user){
  $('dashboard').classList.remove('hidden');
 
  $('welcome').textContent='Welcome, '+(user.user_metadata?.full_name||user.email||'AIMAHDATASUB user');
-
  $('customerEmail').textContent=user.email||'—';
 
- 
+ const {data:profile,error}=await client
+ .from('profiles')
+ .select('full_name,phone')
+ .eq('id',user.id)
+ .maybeSingle();
+
+ if(error){
+  showMsg('authMsg',error.message);
+  return;
+ }
+
  $('customerName').textContent=profile?.full_name||'—';
  $('customerPhone').textContent=profile?.phone||'—';
-}
+   }
 
 const {data:profile,error}=await client
 .from('profiles')
