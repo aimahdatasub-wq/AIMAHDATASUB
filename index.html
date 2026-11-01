@@ -107,6 +107,18 @@ async function showDashboard(user){
  $('auth').classList.add('hidden');$('dashboard').classList.remove('hidden');
  $('welcome').textContent='Welcome, '+(user.user_metadata?.full_name||user.email||'AIMAHDATASUB user');
 }
+$('customerEmail').textContent=user.email||'—';
+
+const {data:profile,error}=await client
+.from('profiles')
+.select('full_name,phone')
+.eq('id',user.id)
+.maybeSingle();
+
+if(error)throw error;
+
+$('customerName').textContent=profile?.full_name||'—';
+$('customerPhone').textContent=profile?.phone||'—';
 $('logout').onclick=async()=>{await client.auth.signOut();$('dashboard').classList.add('hidden');$('auth').classList.remove('hidden')};
 (async()=>{
  const url=localStorage.getItem('datasub_url'),key=localStorage.getItem('datasub_key');
