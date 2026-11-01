@@ -154,7 +154,20 @@ async function showDashboard(user){
  $('customerName').textContent=profile?.full_name||'—';
  $('customerPhone').textContent=profile?.phone||'—';
 }
+const {data:wallet,error:walletError}=await client
+ .from('wallets')
+ .select('balance')
+ .eq('user_id',user.id)
+ .maybeSingle();
 
+if(walletError){
+ $('walletBalance').textContent='Unavailable';
+ $('walletMessage').textContent='Could not load wallet balance.';
+}else{
+ const balance=Number(wallet?.balance||0);
+ $('walletBalance').textContent='₦'+balance.toLocaleString('en-NG',{minimumFractionDigits:2,maximumFractionDigits:2});
+ $('walletMessage').textContent='Your current wallet balance.';
+ }
 $('logout').onclick=async()=>{
  await client.auth.signOut();
  $('dashboard').classList.add('hidden');
