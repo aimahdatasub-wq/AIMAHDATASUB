@@ -167,7 +167,7 @@ if(walletError){
  const balance=Number(wallet?.balance||0);
  $('walletBalance').textContent='₦'+balance.toLocaleString('en-NG',{minimumFractionDigits:2,maximumFractionDigits:2});
  $('walletMessage').textContent='Your current wallet balance.';
- }
+}
 $('logout').onclick=async()=>{
  await client.auth.signOut();
  $('dashboard').classList.add('hidden');
